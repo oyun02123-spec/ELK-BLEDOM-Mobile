@@ -47,13 +47,13 @@ jobs:
 
       - name: Buildozer android debug
         run: |
-          cd mobile
+          # Files are in repo root
           yes | buildozer android debug || true
           
       - name: Find APK
         id: find-apk
         run: |
-          cd mobile
+          # Files are in repo root
           APK_PATH=$(find . -name "*.apk" -type f | head -1)
           echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
           echo "Found APK: $APK_PATH"
