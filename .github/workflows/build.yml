@@ -39,39 +39,16 @@ jobs:
             unzip \
             zlib1g-dev
 
-      - name: Install Cython
-        run: pip install cython
+      - name: Install Cython and Buildozer
+        run: pip install cython buildozer
 
-      - name: Install Buildozer
-        run: pip install buildozer
-
-      - name: Buildozer android debug
-        run: |
-          # Files are in repo root
-          yes | buildozer android debug || true
-          
-      - name: Find APK
-        id: find-apk
-        run: |
-          # Files are in repo root
-          APK_PATH=$(find . -name "*.apk" -type f | head -1)
-          echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
-          echo "Found APK: $APK_PATH"
+      - name: Build APK
+        run: yes | buildozer android debug || true
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: ELK-BLEDOM-LED-Kontrol
-          path: mobile/bin/*.apk
+          path: bin/*.apk
           retention-days: 30
           if-no-files-found: warn
-
-      - name: Send notification
-        if: always()
-        run: |
-          echo "Build tamamlandi."
-          if [ -f mobile/bin/*.apk ]; then
-            echo "APK basariyla olusturuldu!"
-          else
-            echo "APK olusturulamadi, loglari kontrol edin."
-          fi
