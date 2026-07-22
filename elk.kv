@@ -1,0 +1,538 @@
+#:
+#:import dp kivy.metrics.dp
+#:import sp kivy.metrics.sp
+
+<ScrollView>:
+    bar_color: 0.3, 0.3, 0.3, 0.5
+
+<ElkScreen>:
+    orientation: "vertical"
+    padding: dp(12)
+    spacing: dp(8)
+    canvas.before:
+        Color:
+            rgba: 0.08, 0.08, 0.12, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        size_hint_y: None
+        height: dp(50)
+        orientation: "vertical"
+        spacing: dp(2)
+        Label:
+            text: "ELK-BLEDOM LED Kontrol"
+            font_size: sp(20)
+            bold: True
+            color: 0, 0.83, 1, 1
+            size_hint_y: None
+            height: dp(28)
+            halign: "center"
+        Label:
+            id: status_label
+            text: "Baglanti bekleniyor..."
+            font_size: sp(11)
+            color: 0.4, 0.4, 0.4, 1
+            size_hint_y: None
+            height: dp(18)
+            halign: "center"
+
+    ScrollView:
+        size_hint_y: 1
+
+        BoxLayout:
+            orientation: "vertical"
+            size_hint_y: None
+            height: self.minimum_height
+            spacing: dp(6)
+
+            # BAGLANTI BOLUMU
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(10)
+                spacing: dp(6)
+                canvas.before:
+                    Color:
+                        rgba: 0.12, 0.12, 0.18, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [dp(8)]
+
+                Label:
+                    text: "BAGLANTI"
+                    font_size: sp(11)
+                    bold: True
+                    color: 0.6, 0.6, 0.6, 1
+                    size_hint_y: None
+                    height: dp(18)
+                    halign: "left"
+                    text_size: self.size
+                    padding: [dp(4), 0]
+
+                BoxLayout:
+                    size_hint_y: None
+                    height: dp(42)
+                    spacing: dp(6)
+
+                    Button:
+                        id: btn_connect
+                        text: "Tara ve Baglan"
+                        font_size: sp(12)
+                        bold: True
+                        background_normal: ""
+                        background_color: 0, 0.47, 0.83, 1
+                        color: 1, 1, 1, 1
+                        on_release: root.on_connect()
+
+                    Button:
+                        id: btn_disconnect
+                        text: "Kes"
+                        font_size: sp(12)
+                        size_hint_x: 0.3
+                        background_normal: ""
+                        background_color: 0.33, 0.33, 0.33, 1
+                        color: 1, 1, 1, 1
+                        disabled: True
+                        on_release: root.on_disconnect()
+
+            # GUC BOLUMU
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(10)
+                spacing: dp(6)
+                canvas.before:
+                    Color:
+                        rgba: 0.12, 0.12, 0.18, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [dp(8)]
+
+                Label:
+                    text: "GUC"
+                    font_size: sp(11)
+                    bold: True
+                    color: 0.6, 0.6, 0.6, 1
+                    size_hint_y: None
+                    height: dp(18)
+                    halign: "left"
+                    text_size: self.size
+                    padding: [dp(4), 0]
+
+                BoxLayout:
+                    size_hint_y: None
+                    height: dp(42)
+                    spacing: dp(6)
+
+                    Button:
+                        id: btn_power_on
+                        text: "AC"
+                        font_size: sp(12)
+                        bold: True
+                        background_normal: ""
+                        background_color: 0.09, 0.64, 0.29, 1
+                        color: 1, 1, 1, 1
+                        disabled: True
+                        on_release: root.send_power_on()
+
+                    Button:
+                        id: btn_power_off
+                        text: "KAPAT"
+                        font_size: sp(12)
+                        bold: True
+                        background_normal: ""
+                        background_color: 0.86, 0.15, 0.15, 1
+                        color: 1, 1, 1, 1
+                        disabled: True
+                        on_release: root.send_power_off()
+
+            # RENK BOLUMU
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(10)
+                spacing: dp(6)
+                canvas.before:
+                    Color:
+                        rgba: 0.12, 0.12, 0.18, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [dp(8)]
+
+                Label:
+                    text: "RENK"
+                    font_size: sp(11)
+                    bold: True
+                    color: 0.6, 0.6, 0.6, 1
+                    size_hint_y: None
+                    height: dp(18)
+                    halign: "left"
+                    text_size: self.size
+                    padding: [dp(4), 0]
+
+                BoxLayout:
+                    id: color_preview_box
+                    size_hint_y: None
+                    height: dp(24)
+                    canvas.before:
+                        Color:
+                            rgba: root.current_color
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [dp(4)]
+
+                # RGB Slider'lari
+                BoxLayout:
+                    orientation: "vertical"
+                    size_hint_y: None
+                    height: self.minimum_height
+                    spacing: dp(4)
+
+                    BoxLayout:
+                        size_hint_y: None
+                        height: dp(36)
+                        spacing: dp(6)
+                        Label:
+                            text: "R"
+                            font_size: sp(12)
+                            bold: True
+                            color: 1, 0.4, 0.4, 1
+                            size_hint_x: 0.12
+                        Slider:
+                            id: slider_r
+                            min: 0
+                            max: 255
+                            step: 1
+                            value: 255
+                            on_value: root.on_slider_change()
+                            cursor_image: ""
+                            cursor_size: [dp(20), dp(20)]
+
+                    BoxLayout:
+                        size_hint_y: None
+                        height: dp(36)
+                        spacing: dp(6)
+                        Label:
+                            text: "G"
+                            font_size: sp(12)
+                            bold: True
+                            color: 0.4, 1, 0.4, 1
+                            size_hint_x: 0.12
+                        Slider:
+                            id: slider_g
+                            min: 0
+                            max: 255
+                            step: 1
+                            value: 0
+                            on_value: root.on_slider_change()
+                            cursor_image: ""
+                            cursor_size: [dp(20), dp(20)]
+
+                    BoxLayout:
+                        size_hint_y: None
+                        height: dp(36)
+                        spacing: dp(6)
+                        Label:
+                            text: "B"
+                            font_size: sp(12)
+                            bold: True
+                            color: 0.4, 0.4, 1, 1
+                            size_hint_x: 0.12
+                        Slider:
+                            id: slider_b
+                            min: 0
+                            max: 255
+                            step: 1
+                            value: 128
+                            on_value: root.on_slider_change()
+                            cursor_image: ""
+                            cursor_size: [dp(20), dp(20)]
+
+                # Hizli renk secici grid
+                GridLayout:
+                    id: quick_colors
+                    cols: 6
+                    size_hint_y: None
+                    height: dp(36)
+                    spacing: dp(4)
+
+                Button:
+                    id: btn_send_color
+                    text: "Rengi Gonder"
+                    font_size: sp(12)
+                    size_hint_y: None
+                    height: dp(36)
+                    background_normal: ""
+                    background_color: 0, 0.47, 0.83, 1
+                    color: 1, 1, 1, 1
+                    disabled: True
+                    on_release: root.send_color()
+
+            # PARLAKLIK BOLUMU
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(10)
+                spacing: dp(6)
+                canvas.before:
+                    Color:
+                        rgba: 0.12, 0.12, 0.18, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [dp(8)]
+
+                Label:
+                    text: "PARLAKLIK"
+                    font_size: sp(11)
+                    bold: True
+                    color: 0.6, 0.6, 0.6, 1
+                    size_hint_y: None
+                    height: dp(18)
+                    halign: "left"
+                    text_size: self.size
+                    padding: [dp(4), 0]
+
+                BoxLayout:
+                    size_hint_y: None
+                    height: dp(36)
+                    spacing: dp(6)
+                    Slider:
+                        id: slider_brightness
+                        min: 1
+                        max: 100
+                        step: 1
+                        value: 100
+                        on_value: root.on_brightness_change()
+                        cursor_image: ""
+                        cursor_size: [dp(20), dp(20)]
+                    Label:
+                        id: lbl_brightness
+                        text: "%100"
+                        font_size: sp(12)
+                        bold: True
+                        color: 0.98, 0.75, 0.14, 1
+                        size_hint_x: 0.25
+
+                Button:
+                    id: btn_send_brightness
+                    text: "Parlaklik Gonder"
+                    font_size: sp(12)
+                    size_hint_y: None
+                    height: dp(36)
+                    background_normal: ""
+                    background_color: 0.85, 0.47, 0.04, 1
+                    color: 1, 1, 1, 1
+                    disabled: True
+                    on_release: root.send_brightness()
+
+            # EFEKT MODLARI BOLUMU
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(10)
+                spacing: dp(6)
+                canvas.before:
+                    Color:
+                        rgba: 0.12, 0.12, 0.18, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [dp(8)]
+
+                Label:
+                    text: "EFEKT MODLARI"
+                    font_size: sp(11)
+                    bold: True
+                    color: 0.6, 0.6, 0.6, 1
+                    size_hint_y: None
+                    height: dp(18)
+                    halign: "left"
+                    text_size: self.size
+                    padding: [dp(4), 0]
+
+                Spinner:
+                    id: spinner_mode
+                    text: "Seciniz..."
+                    values: root.mode_names
+                    size_hint_y: None
+                    height: dp(40)
+                    font_size: sp(11)
+                    background_normal: ""
+                    background_color: 0.18, 0.18, 0.18, 1
+                    color: 1, 1, 1, 1
+                    on_text: root.on_mode_select(self.text)
+
+                BoxLayout:
+                    size_hint_y: None
+                    height: dp(36)
+                    spacing: dp(6)
+
+                    Button:
+                        id: btn_send_mode
+                        text: "Mod Gonder"
+                        font_size: sp(12)
+                        background_normal: ""
+                        background_color: 0.49, 0.23, 0.93, 1
+                        color: 1, 1, 1, 1
+                        disabled: True
+                        on_release: root.send_mode()
+
+                    Button:
+                        id: btn_random
+                        text: "Rastgele"
+                        font_size: sp(12)
+                        size_hint_x: 0.4
+                        background_normal: ""
+                        background_color: 0.33, 0.33, 0.33, 1
+                        color: 1, 1, 1, 1
+                        disabled: True
+                        on_release: root.random_mode()
+
+                # Hiz slider'i
+                BoxLayout:
+                    size_hint_y: None
+                    height: dp(36)
+                    spacing: dp(6)
+                    Label:
+                        text: "Hiz"
+                        font_size: sp(10)
+                        color: 0.6, 0.6, 0.6, 1
+                        size_hint_x: 0.15
+                    Slider:
+                        id: slider_speed
+                        min: 1
+                        max: 100
+                        step: 1
+                        value: 50
+                        on_value: root.on_speed_change()
+                        cursor_image: ""
+                        cursor_size: [dp(20), dp(20)]
+                    Label:
+                        id: lbl_speed
+                        text: "%50"
+                        font_size: sp(10)
+                        bold: True
+                        color: 0.98, 0.45, 0.09, 1
+                        size_hint_x: 0.2
+
+                Button:
+                    id: btn_send_speed
+                    text: "Hiz Gonder"
+                    font_size: sp(11)
+                    size_hint_y: None
+                    height: dp(32)
+                    background_normal: ""
+                    background_color: 0.92, 0.34, 0.05, 1
+                    color: 1, 1, 1, 1
+                    disabled: True
+                    on_release: root.send_speed()
+
+            # SES MODU
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(10)
+                spacing: dp(6)
+                canvas.before:
+                    Color:
+                        rgba: 0.12, 0.12, 0.18, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [dp(8)]
+
+                Label:
+                    text: "OTOMATIK MODLAR"
+                    font_size: sp(11)
+                    bold: True
+                    color: 0.6, 0.6, 0.6, 1
+                    size_hint_y: None
+                    height: dp(18)
+                    halign: "left"
+                    text_size: self.size
+                    padding: [dp(4), 0]
+
+                Button:
+                    id: btn_music
+                    text: "Ses Duyarli Mod"
+                    font_size: sp(12)
+                    bold: True
+                    size_hint_y: None
+                    height: dp(44)
+                    background_normal: ""
+                    background_color: 0.42, 0.13, 0.66, 1
+                    color: 1, 1, 1, 1
+                    on_release: root.toggle_music()
+
+                Label:
+                    id: lbl_auto_status
+                    text: "Kapali"
+                    font_size: sp(10)
+                    color: 0.33, 0.33, 0.33, 1
+                    size_hint_y: None
+                    height: dp(16)
+
+            # LOG
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: None
+                height: dp(140)
+                padding: dp(10)
+                spacing: dp(4)
+                canvas.before:
+                    Color:
+                        rgba: 0.12, 0.12, 0.18, 1
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [dp(8)]
+
+                Label:
+                    text: "LOG"
+                    font_size: sp(11)
+                    bold: True
+                    color: 0.6, 0.6, 0.6, 1
+                    size_hint_y: None
+                    height: dp(18)
+                    halign: "left"
+                    text_size: self.size
+                    padding: [dp(4), 0]
+
+                TextInput:
+                    id: log_box
+                    size_hint_y: 1
+                    font_name: "monospace"
+                    font_size: sp(9)
+                    background_color: 0.04, 0.04, 0.04, 1
+                    foreground_color: 0, 1, 0, 1
+                    readonly: True
+                    cursor: False
+                    padding: [dp(6), dp(4)]
+                    multiline: True
+                    scroll_y: 0
+
+                BoxLayout:
+                    size_hint_y: None
+                    height: dp(28)
+                    spacing: dp(6)
+
+                    Button:
+                        text: "Temizle"
+                        font_size: sp(10)
+                        background_normal: ""
+                        background_color: 0.25, 0.25, 0.25, 1
+                        color: 1, 1, 1, 1
+                        on_release: root.clear_log()
